@@ -80,8 +80,10 @@ static void ImGui_ImplGX2_SetupRenderState(ImDrawData* draw_data, int fb_width, 
 {
     ImGui_ImplGX2_Data* bd = ImGui_ImplGX2_GetBackendData();
 
+    GX2SetAlphaTest(GX2_TRUE, GX2_COMPARE_FUNC_GREATER, 0.0f);
+
     // Setup render state: alpha-blending enabled, no face culling, no depth testing
-    GX2SetColorControl(GX2_LOGIC_OP_COPY, 0xFF, FALSE, TRUE);
+    GX2SetColorControl(GX2_LOGIC_OP_COPY, GX2_ENABLE, GX2_DISABLE, GX2_ENABLE);
     GX2SetBlendControl(GX2_RENDER_TARGET_0,
                 GX2_BLEND_MODE_SRC_ALPHA,
                 GX2_BLEND_MODE_INV_SRC_ALPHA,
@@ -91,11 +93,11 @@ static void ImGui_ImplGX2_SetupRenderState(ImDrawData* draw_data, int fb_width, 
                 GX2_BLEND_MODE_INV_SRC_ALPHA,
                 GX2_BLEND_COMBINE_MODE_ADD);
     GX2SetCullOnlyControl(GX2_FRONT_FACE_CCW, FALSE, FALSE);
-    GX2SetDepthOnlyControl(FALSE, FALSE, GX2_COMPARE_FUNC_NEVER);
+    GX2SetDepthOnlyControl(GX2_FALSE, GX2_FALSE, GX2_COMPARE_FUNC_NEVER);
 
     // Setup viewport, orthographic projection matrix
     // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
-    GX2SetViewport(0, 0, (float)fb_width, (float)fb_height, 0.0f, 1.0f);
+    //GX2SetViewport(0, 0, (float)fb_width, (float)fb_height, 0.0f, 1.0f);
 
     GX2SetFetchShader(&bd->ShaderGroup->fetchShader);
     GX2SetVertexShader(bd->ShaderGroup->vertexShader);
@@ -203,7 +205,7 @@ void    ImGui_ImplGX2_RenderDrawData(ImDrawData* draw_data)
                     continue;
 
                 // Apply scissor/clipping rectangle
-                GX2SetScissor((uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
+                //GX2SetScissor((uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
 
                 // Bind texture, Draw
                 ImGui_ImplGX2_Texture* tex = (ImGui_ImplGX2_Texture*) pcmd->GetTexID();
